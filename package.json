@@ -1,0 +1,30 @@
+{
+  "name": "unb-api",
+  "version": "1.0.2",
+  "description": "API wrapper for UnbelievaBoat Discord Bot API",
+  "main": "src/index.js",
+  "types": "typings/index.d.ts",
+  "scripts": {
+    "test": "tslint 'typings/*.ts'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UnbelievaBoat/unb-api.git"
+  },
+  "keywords": [
+    "UnbelievaBoat",
+    "api",
+    "api wrapper",
+    "unb api"
+  ],
+  "author": "unbelievable",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^10.0.7",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "request": "^2.87.0"
+  }
+}
