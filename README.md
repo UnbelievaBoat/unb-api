@@ -14,7 +14,7 @@ Full API documentation is located at [https://unb.pizza/api/docs](https://unb.pi
 
 ### Example
 ```javascript
-const {Client} = require('unb-api');
+const { Client } = require('unb-api');
 const client = new Client('TOKEN');    // Get your API token from https://unb.pizza/api/docs
 
 const guildID = '305129477627969547';
