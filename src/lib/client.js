@@ -25,7 +25,8 @@ class Client {
     getUserBalance(guild_id, user_id) {
         if (!guild_id) throw new Error('guild_id must be specified');
         if (!user_id) throw new Error('user_id must be specified');
-        return this._request('GET', `guilds/${guild_id}/users/${user_id}`).then(data => new User(data));
+        return this._request('GET', `guilds/${guild_id}/users/${user_id}`)
+            .then(data => new User(data));
     }
 
 
@@ -37,13 +38,14 @@ class Client {
      * @param {number|string} [bank] Value to set the bank balance to
      * @returns {Promise<User>}
      */
-    setUserBalance(guild_id, user_id, {cash, bank}) {
+    setUserBalance(guild_id, user_id, { cash, bank }) {
         if (!guild_id) throw new Error('guild_id must be specified');
         if (!user_id) throw new Error('user_id must be specified');
         if (!cash && !bank) throw new Error('cash or bank must be specified');
         if (cash === Infinity) cash = 'Infinity';
         if (bank === Infinity) bank = 'Infinity';
-        return this._request('PUT', `guilds/${guild_id}/users/${user_id}`, {cash, bank}).then(data => new User(data));
+        return this._request('PUT', `guilds/${guild_id}/users/${user_id}`, { cash, bank })
+            .then(data => new User(data));
     }
 
     /**
@@ -55,13 +57,14 @@ class Client {
      * @param {number|string} [bank] Value to increase/decrease the bank balance by
      * @returns {Promise<User>}
      */
-    editUserBalance(guild_id, user_id, {cash, bank}) {
+    editUserBalance(guild_id, user_id, { cash, bank }) {
         if (!guild_id) throw new Error('guild_id must be specified');
         if (!user_id) throw new Error('user_id must be specified');
         if (!cash && !bank) throw new Error('cash or bank must be specified');
         if (cash === Infinity) cash = 'Infinity';
         if (bank === Infinity) bank = 'Infinity';
-        return this._request('PATCH', `guilds/${guild_id}/users/${user_id}`, {cash, bank}).then(data => new User(data));
+        return this._request('PATCH', `guilds/${guild_id}/users/${user_id}`, { cash, bank })
+            .then(data => new User(data));
     }
 
 
@@ -72,7 +75,8 @@ class Client {
      */
     getGuildLeaderboard(guild_id) {
         if (!guild_id) throw new Error('guild_id must be specified');
-        return this._request('GET', `guilds/${guild_id}/users`).then(data => data.map(user => new User(user)));
+        return this._request('GET', `guilds/${guild_id}/users`)
+            .then(data => data.map(user => new User(user)));
     }
 
 
@@ -87,22 +91,18 @@ class Client {
     _request(method, endpoint, data = {}) {
         return new Promise((resolve, reject) => {
             const options = {
-                headers: {
-                    Authorization: this.token,
-                    'Content-Type': 'application/json'
-                },
+                headers: { Authorization: this.token, 'Content-Type': 'application/json' },
                 uri: `${this.baseURL}/${this.version ? `${this.version} /` : ''}${endpoint}`,
-                method,
+                method: method,
                 json: data
             };
 
             request(options, (err, res, body) => {
                 if (err) return reject(err);
-
                 if (res.statusCode === 200) {
                     resolve(body);
                 } else {
-                    reject(body.error ? body.error : `${res.statusCode}: ${res.statusMessage}`);
+                    reject(new Error(body.error ? body.error : `${res.statusCode}: ${res.statusMessage}`));
                 }
             });
         });
