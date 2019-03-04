@@ -33,12 +33,12 @@ getUserBalance(guild_id, user_id)
 Returns: `Promise<User>`
 #
 ```
-setUserBalance(guild_id, user_id, {cash, bank})
+setUserBalance(guild_id, user_id, { cash, bank }, reason)
 ```
 Returns: `Promise<User>`
 #
 ```
-editUserBalance(guild_id, user_id, {cash, bank})
+editUserBalance(guild_id, user_id, { cash, bank }, reason)
 ```
 Returns: `Promise<User>`
 #
