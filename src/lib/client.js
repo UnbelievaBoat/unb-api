@@ -36,15 +36,16 @@ class Client {
      * @param {string} user_id - User ID
      * @param {number|string} [cash] Value to set the cash balance to
      * @param {number|string} [bank] Value to set the bank balance to
+     * @param {string} [reason] Reason for the audit log
      * @returns {Promise<User>}
      */
-    setUserBalance(guild_id, user_id, { cash, bank }) {
+    setUserBalance(guild_id, user_id, { cash, bank } = {}, reason) {
         if (!guild_id) throw new Error('guild_id must be specified');
         if (!user_id) throw new Error('user_id must be specified');
         if (!cash && !bank) throw new Error('cash or bank must be specified');
         if (cash === Infinity) cash = 'Infinity';
         if (bank === Infinity) bank = 'Infinity';
-        return this._request('PUT', `guilds/${guild_id}/users/${user_id}`, { cash, bank })
+        return this._request('PUT', `guilds/${guild_id}/users/${user_id}`, { cash, bank, reason })
             .then(data => new User(data));
     }
 
@@ -55,15 +56,16 @@ class Client {
      * @param {string} user_id - User ID
      * @param {number|string} [cash] Value to increase/decrease the cash balance by
      * @param {number|string} [bank] Value to increase/decrease the bank balance by
+     * @param {string} [reason] Reason for the audit log
      * @returns {Promise<User>}
      */
-    editUserBalance(guild_id, user_id, { cash, bank }) {
+    editUserBalance(guild_id, user_id, { cash, bank } = {}, reason) {
         if (!guild_id) throw new Error('guild_id must be specified');
         if (!user_id) throw new Error('user_id must be specified');
         if (!cash && !bank) throw new Error('cash or bank must be specified');
         if (cash === Infinity) cash = 'Infinity';
         if (bank === Infinity) bank = 'Infinity';
-        return this._request('PATCH', `guilds/${guild_id}/users/${user_id}`, { cash, bank })
+        return this._request('PATCH', `guilds/${guild_id}/users/${user_id}`, { cash, bank, reason })
             .then(data => new User(data));
     }
 
@@ -102,7 +104,7 @@ class Client {
                 if (res.statusCode === 200) {
                     resolve(body);
                 } else {
-                    reject(new Error(body.error ? body.error : `${res.statusCode}: ${res.statusMessage}`));
+                    reject(new Error(body && body.error ? body.error + ' - ' + body.message : `${res.statusCode}: ${res.statusMessage}`));
                 }
             });
         });
