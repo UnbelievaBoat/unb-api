@@ -13,7 +13,7 @@ class User {
          * User ID of the discord user.
          * @type {string}
          */
-        this.user_id = data.user_id;
+        this.id = data.user_id;
 
         /**
          * User's cash balance.
@@ -33,8 +33,11 @@ class User {
          */
         this.total = data.total;
 
-
-        Object.defineProperty(this, 'rawData', {value: data});
+		/**
+		 * Raw data returned by the API.
+		 * @type {object}
+		 */
+		this.rawData = data;
     }
 }
 
