@@ -1,6 +1,6 @@
 {
   "name": "unb-api",
-  "version": "1.0.5",
+  "version": "2.0.0",
   "description": "API wrapper for UnbelievaBoat Discord Bot API",
   "main": "src/index.js",
   "repository": {
@@ -14,6 +14,12 @@
     "unb api"
   ],
   "author": "unbelievable",
+  "contributors": [
+    {
+      "name": "rjt",
+      "email": "rjt.rockx@gmail.com"
+    }
+  ],
   "license": "MIT",
   "dependencies": {
     "got": "^9.6.0"
