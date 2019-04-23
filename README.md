@@ -28,22 +28,22 @@ client.getUserBalance(guildID, userID).then(user => console.log(user));
 
 ### Methods
 ```
-getUserBalance(guild_id, user_id)
+getUserBalance(guildId, userId)
 ```
 Returns: `Promise<User>`
 #
 ```
-setUserBalance(guild_id, user_id, { cash, bank }, reason)
+setUserBalance(guildId, userId, { cash, bank }, reason)
 ```
 Returns: `Promise<User>`
 #
 ```
-editUserBalance(guild_id, user_id, { cash, bank }, reason)
+editUserBalance(guildId, userId, { cash, bank }, reason)
 ```
 Returns: `Promise<User>`
 #
 ```
-getGuildLeaderboard(guild_id)
+getGuildLeaderboard(guildId)
 ```
 Returns: `Promise<User[]>`
 #
@@ -53,11 +53,11 @@ Returns: `Promise<User[]>`
 Type | Property | Description
 --- | --- | ---
 Number | `rank?` | Leaderboard rank of the user. This is only present on getUserBalance() and getGuildLeaderboard()
-String | `user_id` | User ID of the discord user.
+String | `id` | ID of the discord user.
 Number | `cash` | User's cash balance.
 Number | `bank` | User's bank balance.
 Number | `total` | User's total balance.
- 
+
 
 
 ## Support
