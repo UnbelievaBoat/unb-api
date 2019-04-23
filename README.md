@@ -1,6 +1,6 @@
 # UnbelievaBoat API
 
-[![Discord](https://discordapp.com/api/guilds/305129477627969547/embed.png)](https://discord.gg/YMJ2dGp)
+[![Discord](https://discordapp.com/api/guilds/305129477627969547/widget.png?style=shield)](https://discord.gg/YMJ2dGp)
 [![npm](https://img.shields.io/npm/v/npm.svg)](https://www.npmjs.com/package/unb-api)
 [![npm downloads](https://img.shields.io/npm/dt/unb-api.svg?maxAge=3600)](https://www.npmjs.com/package/unb-api)
 [![Open Source Love](https://badges.frapsoft.com/os/mit/mit.svg?v=102)](https://github.com/ellerbrock/open-source-badge/)
