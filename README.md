@@ -10,12 +10,12 @@
 `npm install unb-api`
 
 ## Documentation
-Full API documentation is located at [https://unb.pizza/api/docs](https://unb.pizza/api/docs)
+Full API documentation is located at [https://unbelievable.pizza/api/docs](https://unbelievable.pizza/api/docs)
 
 ### Example
 ```javascript
 const { Client } = require('unb-api');
-const client = new Client('TOKEN');    // Get your API token from https://unb.pizza/api/docs
+const client = new Client('TOKEN');    // Get your API token from https://unbelievable.pizza/api/docs
 
 const guildID = '305129477627969547';
 const userID = '261674810914897931';
