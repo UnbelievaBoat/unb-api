@@ -1,5 +1,5 @@
 module.exports = {
     version: require('../package').version,
-    Client: require('./lib/client'),
+    Client: require('./lib/Client'),
     User: require('./lib/structures/User')
 };

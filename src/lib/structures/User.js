@@ -34,8 +34,17 @@ class User {
         this.total = data.total;
 
 
-        Object.defineProperty(this, 'rawData', {value: data});
+        /**
+         * Raw response body
+         * @type {object}
+         */
+        this.rawData = data;
     }
+
+    get id() {
+        return this.user_id;
+    }
+
 }
 
 module.exports = User;

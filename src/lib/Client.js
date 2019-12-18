@@ -4,83 +4,80 @@ const User = require('./structures/User');
 class Client {
     /**
      *
-     * @param {string} token - API Token. Get yours from https://unbelievable.pizza/api/docs
+     * @param {string} token - API Token. Get yours from https://unbelievaboat.com/api/docs
      * @param {?object} [options] - Options
-     * @param {?string} [options.baseURL] - API hostname. Defaults to https://unbelievable.pizza/api
+     * @param {?string} [options.baseURL] - API hostname. Defaults to https://unbelievaboat.com/api
      * @param {?number} [options.version] - API version. Defaults to the latest version
      */
     constructor(token, options = {}) {
         if (!token) throw new Error('The API token must be specified');
         this.token = token;
-        this.baseURL = options.baseURL ? options.baseURL : 'https://unbelievable.pizza/api';
+        this.baseURL = options.baseURL ? options.baseURL : 'https://unbelievaboat.com/api';
         this.version = options.version !== undefined ? 'v' + options.version : '';
     }
 
     /**
-     * Get a user balance
-     * @param guild_id - Guild ID
-     * @param user_id - User ID
-     * @returns {Promise<User>}
+     * Get a user's balance
+     * @param guildId - Guild ID
+     * @param userId - User ID
+     * @returns {Promise<User>} User object
      */
-    getUserBalance(guild_id, user_id) {
-        if (!guild_id) throw new Error('guild_id must be specified');
-        if (!user_id) throw new Error('user_id must be specified');
-        return this._request('GET', `guilds/${guild_id}/users/${user_id}`)
+    getUserBalance(guildId, userId) {
+        if (!guildId) throw new Error('guildId must be specified');
+        if (!userId) throw new Error('userId must be specified');
+        return this._request('GET', `guilds/${guildId}/users/${userId}`)
             .then(data => new User(data));
     }
-
 
     /**
      * Set a user's balance to the given params
-     * @param {string} guild_id - Guild ID
-     * @param {string} user_id - User ID
+     * @param {string} guildId - Guild ID
+     * @param {string} userId - User ID
      * @param {number|string} [cash] Value to set the cash balance to
      * @param {number|string} [bank] Value to set the bank balance to
      * @param {string} [reason] Reason for the audit log
-     * @returns {Promise<User>}
+     * @returns {Promise<User>} User object
      */
-    setUserBalance(guild_id, user_id, { cash, bank } = {}, reason) {
-        if (!guild_id) throw new Error('guild_id must be specified');
-        if (!user_id) throw new Error('user_id must be specified');
+    setUserBalance(guildId, userId, { cash, bank } = {}, reason) {
+        if (!guildId) throw new Error('guildId must be specified');
+        if (!userId) throw new Error('userId must be specified');
         if (!cash && !bank) throw new Error('cash or bank must be specified');
         if (cash === Infinity) cash = 'Infinity';
         if (bank === Infinity) bank = 'Infinity';
-        return this._request('PUT', `guilds/${guild_id}/users/${user_id}`, { cash, bank, reason })
+        return this._request('PUT', `guilds/${guildId}/users/${userId}`, { cash, bank, reason })
             .then(data => new User(data));
     }
 
     /**
-     * Increase or decrease the User's balance by the cash and bank values given.
-     * Use a negative number to decrease.
-     * @param {string} guild_id - Guild ID
-     * @param {string} user_id - User ID
+     * Increase or decrease a user's balance by the cash and bank values given.
+     * Use negative values to decrease.
+     * @param {string} guildId - Guild ID
+     * @param {string} userId - User ID
      * @param {number|string} [cash] Value to increase/decrease the cash balance by
      * @param {number|string} [bank] Value to increase/decrease the bank balance by
      * @param {string} [reason] Reason for the audit log
      * @returns {Promise<User>}
      */
-    editUserBalance(guild_id, user_id, { cash, bank } = {}, reason) {
-        if (!guild_id) throw new Error('guild_id must be specified');
-        if (!user_id) throw new Error('user_id must be specified');
+    editUserBalance(guildId, userId, { cash, bank } = {}, reason) {
+        if (!guildId) throw new Error('guildId must be specified');
+        if (!userId) throw new Error('userId must be specified');
         if (!cash && !bank) throw new Error('cash or bank must be specified');
         if (cash === Infinity) cash = 'Infinity';
         if (bank === Infinity) bank = 'Infinity';
-        return this._request('PATCH', `guilds/${guild_id}/users/${user_id}`, { cash, bank, reason })
+        return this._request('PATCH', `guilds/${guildId}/users/${userId}`, { cash, bank, reason })
             .then(data => new User(data));
     }
 
-
     /**
      * Get a guild leaderboard
-     * @param guild_id - Guild ID
+     * @param guildId - Guild ID
      * @returns {Promise<Array<User>>}
      */
-    getGuildLeaderboard(guild_id) {
-        if (!guild_id) throw new Error('guild_id must be specified');
-        return this._request('GET', `guilds/${guild_id}/users`)
+    getGuildLeaderboard(guildId) {
+        if (!guildId) throw new Error('guildId must be specified');
+        return this._request('GET', `guilds/${guildId}/users`)
             .then(data => data.map(user => new User(user)));
     }
-
 
     /**
      * Send a request
@@ -94,13 +91,15 @@ class Client {
         return new Promise((resolve, reject) => {
             const options = {
                 headers: { Authorization: this.token, 'Content-Type': 'application/json' },
-                uri: `${this.baseURL}/${this.version ? `${this.version} /` : ''}${endpoint}`,
+                uri: `${this.baseURL}/${this.version ? `${this.version}/` : ''}${endpoint}`,
                 method: method,
                 json: data
             };
 
             request(options, (err, res, body) => {
-                if (err) return reject(err);
+                if (err) {
+                    return reject(err);
+                }
                 if (res.statusCode === 200) {
                     resolve(body);
                 } else {
