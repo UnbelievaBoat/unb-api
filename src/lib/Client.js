@@ -1,11 +1,12 @@
 const request = require('request');
 const User = require('./structures/User');
+const { APIError, HTTPError } = require('./errors');
 
 class Client {
     /**
      *
      * @param {string} token - API Token. Get yours from https://unbelievaboat.com/api/docs
-     * @param {?object} [options] - Options
+     * @param {?Object} [options] - Options
      * @param {?string} [options.baseURL] - API hostname. Defaults to https://unbelievaboat.com/api
      * @param {?number} [options.version] - API version. Defaults to the latest version
      */
@@ -70,13 +71,23 @@ class Client {
 
     /**
      * Get a guild leaderboard
-     * @param guildId - Guild ID
-     * @returns {Promise<Array<User>>}
+     * @param {string} guildId - Guild ID
+     * @param {Object} [query] - Query string parameters (sort, limit, offset, page)
+     * @returns {Promise<Array<User>|{ users: Array<User>, totalPages: number }>}
      */
-    getGuildLeaderboard(guildId) {
+    getGuildLeaderboard(guildId, query) {
         if (!guildId) throw new Error('guildId must be specified');
-        return this._request('GET', `guilds/${guildId}/users`)
-            .then(data => data.map(user => new User(user)));
+        return this._request('GET', `guilds/${guildId}/users`, {}, query)
+            .then(data => {
+                if (data.users) {
+                    return {
+                        users: data.users.map(user => new User(user)),
+                        totalPages: data.total_pages
+                    };
+                } else {
+                    return data.map(user => new User(user));
+                }
+            });
     }
 
     /**
@@ -84,16 +95,21 @@ class Client {
      * @param method - HTTP method (GET, PUT, PATCH etc.)
      * @param endpoint - API endpoint
      * @param [data] - JSON data
+     * @param [query] - Query string
      * @returns {Promise<Object>}
      * @private
      */
-    _request(method, endpoint, data = {}) {
+    _request(method, endpoint, data = {}, query = {}) {
         return new Promise((resolve, reject) => {
             const options = {
-                headers: { Authorization: this.token, 'Content-Type': 'application/json' },
+                headers: {
+                    Authorization: this.token,
+                    'Content-Type': 'application/json'
+                },
                 uri: `${this.baseURL}/${this.version ? `${this.version}/` : ''}${endpoint}`,
                 method: method,
-                json: data
+                json: data,
+                qs: query
             };
 
             request(options, (err, res, body) => {
@@ -103,7 +119,11 @@ class Client {
                 if (res.statusCode === 200) {
                     resolve(body);
                 } else {
-                    reject(new Error(body && body.error ? body.error + ' - ' + body.message : `${res.statusCode}: ${res.statusMessage}`));
+                    if (body && body.error) {
+                        reject(new APIError(body.message, res.statusCode, body.errors));
+                    } else {
+                        reject(new HTTPError(res.statusMessage, res.statusCode));
+                    }
                 }
             });
         });

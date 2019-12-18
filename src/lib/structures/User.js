@@ -35,10 +35,10 @@ class User {
 
 
         /**
-         * Raw response body
+         * Raw data response
          * @type {object}
          */
-        this.rawData = data;
+        Object.defineProperty(this, 'rawData', { value: data });
     }
 
     get id() {
