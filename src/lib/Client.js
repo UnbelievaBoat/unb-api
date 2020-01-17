@@ -1,6 +1,5 @@
-const request = require('request');
 const User = require('./structures/User');
-const { APIError, HTTPError } = require('./errors');
+const RequestHandler = require('./RequestHandler');
 
 class Client {
     /**
@@ -9,12 +8,15 @@ class Client {
      * @param {?Object} [options] - Options
      * @param {?string} [options.baseURL] - API hostname. Defaults to https://unbelievaboat.com/api
      * @param {?number} [options.version] - API version. Defaults to the latest version
+     * @param {?number} [options.maxRetries] - Maximum number of times to retry a request if it's ratelimited. Defaults to 3
      */
     constructor(token, options = {}) {
         if (!token) throw new Error('The API token must be specified');
         this.token = token;
         this.baseURL = options.baseURL ? options.baseURL : 'https://unbelievaboat.com/api';
         this.version = options.version !== undefined ? 'v' + options.version : '';
+        this.maxRetries = options.maxRetries || 3;
+        this.requestHandler = new RequestHandler(this);
     }
 
     /**
@@ -99,34 +101,8 @@ class Client {
      * @returns {Promise<Object>}
      * @private
      */
-    _request(method, endpoint, data = {}, query = {}) {
-        return new Promise((resolve, reject) => {
-            const options = {
-                headers: {
-                    Authorization: this.token,
-                    'Content-Type': 'application/json'
-                },
-                uri: `${this.baseURL}/${this.version ? `${this.version}/` : ''}${endpoint}`,
-                method: method,
-                json: data,
-                qs: query
-            };
-
-            request(options, (err, res, body) => {
-                if (err) {
-                    return reject(err);
-                }
-                if (res.statusCode === 200) {
-                    resolve(body);
-                } else {
-                    if (body && body.error) {
-                        reject(new APIError(body.message, res.statusCode, body.errors));
-                    } else {
-                        reject(new HTTPError(res.statusMessage, res.statusCode));
-                    }
-                }
-            });
-        });
+    _request(method, endpoint, data, query) {
+        return this.requestHandler.request(method, endpoint, data, query);
     }
 }
 
