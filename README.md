@@ -21,10 +21,19 @@ const guildID = '305129477627969547';
 const userID = '261674810914897931';
 
 client.getUserBalance(guildID, userID).then(user => console.log(user));
+client.getGuildLeaderboard(guildID, { sort: 'cash' }).then(lb => console.log(lb));
 ```
 
 ### Constructor
 `new Client(token, [options])`
+
+##### Options
+Type    |  Property     | Description
+------- | ---------     | -----------
+String  | `baseURL?`    | API hostname. Defaults to https://unbelievaboat.com/api
+Number  | `version?`    | API version. Defaults to the latest version
+Number  | `maxRetries?` | Maximum number of times to retry a request if it's ratelimited. Defaults to 3
+
 
 ### Methods
 ```
@@ -43,8 +52,17 @@ editUserBalance(guild_id, user_id, { cash, bank }, reason)
 Returns: `Promise<User>`
 #
 ```
-getGuildLeaderboard(guild_id)
+getGuildLeaderboard(guild_id, [query])
 ```
+
+##### JSON Query Parameters
+Type    |  Property | Description
+------- | --------- | -----------
+String  | `sort?`   | Sort the leaderboard by `cash`, `bank` or `total`. Default is `total`.
+Number  | `limit?`  | Limit the number of users returned. Default is no limit, unless a page is given then it's 1000.
+Number  | `offset?` | Specify the offset of the first user.
+Number  | `page?`   | Specify the page. If a page is given, the response will be `Promise<{ users: User[], totalPages: Number }>`
+
 Returns: `Promise<User[]>`
 #
 
