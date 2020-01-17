@@ -7,6 +7,7 @@ declare module 'unb-api' {
         public token: string;
         public baseURL: string;
         public version: string;
+        public maxRetries: Number;
 
         public getUserBalance(guild_id: string, user_id: string): Promise<User>;
 
@@ -14,7 +15,7 @@ declare module 'unb-api' {
 
         public editUserBalance(guild_id: string, user_id: string, balance: Balance): Promise<User>;
 
-        public getGuildLeaderboard(guild_id: string): Promise<User[]>;
+        public getGuildLeaderboard(guild_id: string, query?: Object): Promise<User[]> | Promise<{ users: User[], totalPages: Number }>;
 
         private _request(method: string, endpoint: string, data?: object): Promise<any>;
     }
@@ -39,5 +40,6 @@ declare module 'unb-api' {
     export type Options = {
         baseURL?: string;
         version?: number;
+        maxRetries?: Number;
     }
 }
