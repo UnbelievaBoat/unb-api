@@ -41,7 +41,7 @@ class RequestHandler {
                         //  Reject with an APIError or HTTPError
                         const rejectWithError = () => {
                             if (body && body.error) {
-                                reject(new APIError(body.message, res.statusCode, body.errors));
+                                reject(new APIError(body.error || body.message, res.statusCode, body.errors));
                             } else {
                                 reject(new HTTPError(res.statusMessage, res.statusCode));
                             }
