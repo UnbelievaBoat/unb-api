@@ -1,4 +1,4 @@
-const User = require('./structures/User');
+const { Guild, Permission, User } = require('./structures');
 const RequestHandler = require('./RequestHandler');
 
 class Client {
@@ -90,6 +90,29 @@ class Client {
                     return data.map(user => new User(user));
                 }
             });
+    }
+
+    /**
+     * Retrieve basic guild information for the given ID
+     * @param {string} guildId - Guild ID
+     * @returns {Promise<{Guild}>}
+     */
+    getGuild(guildId) {
+        if (!guildId) throw new Error('guildId must be specified');
+        return this._request('GET', `guilds/${guildId}`)
+            .then(data => new Guild(data));
+    }
+
+    /**
+     * Retrieve the permissions for the application
+     * This can only be used with an application API token
+     * @param {string} guildId - Guild ID
+     * @returns {Promise<{Permission}>}
+     */
+    getApplicationPermission(guildId) {
+        if (!guildId) throw new Error('guildId must be specified');
+        return this._request('GET', `applications/@me/guilds/${guildId}`)
+            .then(data => new Permission(data.permissions));
     }
 
     /**

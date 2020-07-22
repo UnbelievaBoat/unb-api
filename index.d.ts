@@ -17,6 +17,10 @@ declare module 'unb-api' {
 
         public getGuildLeaderboard(guild_id: string, query?: Object): Promise<User[]> | Promise<{ users: User[], totalPages: Number }>;
 
+        public getGuild(guild_id: string): Promise<Guild>;
+
+        public getApplicationPermission(guild_id: string): Promise<Permission>;
+
         private _request(method: string, endpoint: string, data?: object): Promise<any>;
     }
 
@@ -41,5 +45,28 @@ declare module 'unb-api' {
         baseURL?: string;
         version?: number;
         maxRetries?: Number;
+    }
+
+    export class Guild {
+        public constructor(data: object);
+
+        public id: string;
+        public name: string;
+        public icon: string;
+        public iconURL: string;
+        public ownerID: string;
+        public memberCount: number;
+        public currencySymbol: string;
+
+        private rawData: object;
+    }
+
+    export class Permission {
+        public constructor(allow: number);
+
+        public allow: string;
+        public json: string
+
+        public has(permission: string | string[]): boolean;
     }
 }
