@@ -65,6 +65,15 @@ Number  | `page?`   | Specify the page. If a page is given, the response will be
 
 Returns: `Promise<User[]>`
 #
+```
+getGuild(guild_id)
+```
+Returns: `Promise<Guild>`
+#
+```
+getApplicationPermission(guild_id)
+```
+Returns: `Promise<Permission>`
 
 ### Structures
 #### User
@@ -76,6 +85,23 @@ Number | `cash` | User's cash balance.
 Number | `bank` | User's bank balance.
 Number | `total` | User's total balance.
  
+#### Guild
+Type | Property | Description
+--- | --- | ---
+String | `id` | Guild ID.
+String | `name` | Guild name.
+Number | `icon` | Icon hash.
+Number | `iconURL` | Icon url.
+String | `ownerID` | User ID of the owner.
+Number | `memberCount` | Total number of members.
+String | `currencySymbol` | Currency symbol
+
+
+#### Permission
+Type | Property | Description
+--- | --- | ---
+Number | `allow` | The allowed bitwise permissions number.
+String | `json` | JSON representation of the allowed and denied permissions.
 
 
 ## Support
