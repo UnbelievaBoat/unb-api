@@ -1,10 +1,15 @@
 class APIError extends Error {
-    constructor(message, status, errors) {
+    constructor(response) {
         super();
         this.name = this.constructor.name;
-        this.message = message || 'Unknown error';
-        this.status = status;
-        this.errors = errors || null;
+        this.message = response.data.error || response.data.message || 'Unknown error';
+        this.status = response.status;
+        this.errors = response.data.errors || null;
+
+        Object.defineProperty(this, 'response', {
+            enumerable: true,
+            value: response
+        });
     }
 }
 

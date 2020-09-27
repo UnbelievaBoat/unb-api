@@ -1,9 +1,14 @@
 class HTTPError extends Error {
-    constructor(message, status) {
+    constructor(response) {
         super();
         this.name = this.constructor.name;
-        this.message = message || 'Unknown error';
-        this.status = status;
+        this.message = response.statusText || 'Unknown error';
+        this.status = response.status;
+
+        Object.defineProperty(this, 'response', {
+            enumerable: true,
+            value: response
+        });
     }
 }
 
