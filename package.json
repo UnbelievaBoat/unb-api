@@ -22,6 +22,6 @@
     "typescript": "^2.6.2"
   },
   "dependencies": {
-    "request": "^2.87.0"
+    "axios": "^0.20.0"
   }
 }

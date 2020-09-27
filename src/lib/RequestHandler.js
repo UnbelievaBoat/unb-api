@@ -1,4 +1,4 @@
-const request = require('request');
+const axios = require('axios');
 const Bucket = require('./structures/Bucket');
 const { APIError, HTTPError } = require('./errors');
 const MajorParams = ['guilds'];
@@ -18,20 +18,20 @@ class RequestHandler {
         return new Promise((resolve, reject) => {
             const fn = (callback) => {
                 const options = {
+                    validateStatus: null,
                     headers: {
-                        Authorization: this._client.token,
+                        'Authorization': this._client.token,
                         'Content-Type': 'application/json'
                     },
-                    uri: `${this._client.baseURL}/${this._client.version ? `${this._client.version}/` : ''}${endpoint}`,
+                    baseURL: this._client.baseURL,
+                    url: `/${this._client.version ? `${this._client.version}/` : ''}${endpoint}`,
                     method: method,
-                    json: data,
-                    qs: query
+                    data: data,
+                    params: query
                 };
 
-                request(options, (err, res, body) => {
-                    if (err) {
-                        reject(err);
-                    } else {
+                axios.request(options)
+                    .then(res => {
                         //  Increase the number of attempts
                         ++_attempts;
 
@@ -40,10 +40,10 @@ class RequestHandler {
 
                         //  Reject with an APIError or HTTPError
                         const rejectWithError = () => {
-                            if (body && body.error) {
-                                reject(new APIError(body.error || body.message, res.statusCode, body.errors));
+                            if (res.data && res.data.error) {
+                                reject(new APIError(res.data.error || res.data.message, res.status, res.data.errors));
                             } else {
-                                reject(new HTTPError(res.statusMessage, res.statusCode));
+                                reject(new HTTPError(res.statusText, res.status));
                             }
                         };
 
@@ -63,9 +63,9 @@ class RequestHandler {
                             }
                         };
 
-                        if (res.statusCode.toString().startsWith('2')) {
-                            resolve(body);
-                        } else if (res.statusCode === 429) {
+                        if (res.status >= 200 && res.status < 300) {
+                            resolve(res.data);
+                        } else if (res.status === 429) {
                             //  Check if too many retry attempts
                             if (_attempts >= this._client.maxRetries) {
                                 rejectWithError();
@@ -75,10 +75,9 @@ class RequestHandler {
                         } else {
                             rejectWithError();
                         }
-                    }
 
-                    callback();
-                });
+                        callback();
+                    });
             };
 
             this.ratelimits[route].queue(fn);
