@@ -1,6 +1,6 @@
 {
   "name": "unb-api",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "API wrapper for UnbelievaBoat Discord Bot API",
   "main": "src/index.js",
   "types": "index.d.ts",
