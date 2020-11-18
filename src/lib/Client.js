@@ -3,15 +3,22 @@ const RequestHandler = require('./RequestHandler');
 
 class Client {
     /**
-     *
-     * @param {string} token - API Token. Get yours from https://unbelievaboat.com/api/docs
-     * @param {?Object} [options] - Options
-     * @param {?string} [options.baseURL] - API hostname. Defaults to https://unbelievaboat.com/api
-     * @param {?number} [options.version] - API version. Defaults to the latest version
-     * @param {?number} [options.maxRetries] - Maximum number of times to retry a request if it's ratelimited. Defaults to 3
-     */
+	 *
+	 * @constructs Client
+	 * @param {string} token - Your api token. You may get one from https://unbelievaboat.com/api/docs.
+	 * @param {object} [options={}] - The options for the api client.
+	 * @param {string} [options.baseURL="https://unbelievaboat.com/api"] - The api hostname to use. Defaults to https://unbelievaboat.com/api.
+	 * @param {number} [options.version=""] - The api version to use. Defaults to the latest version.
+	 * @param {number} [options.maxRetries=3] - The maximum number of times to retry a request if it's ratelimited. Defaults to 3.
+	 * @throws {TypeError}
+	 */
     constructor(token, options = {}) {
-        if (!token) throw new Error('The API token must be specified');
+        if (typeof token !== 'string') throw new TypeError('The API token must be a string');
+		if (typeof options !== 'object') throw new TypeError('options must be an object');
+		if (options.baseURL !== undefined && typeof options.baseURL !== 'string') throw new TypeError('baseURL must be a string');
+		if (options.version !== undefined && typeof options.version !== 'number') throw new TypeError('version must be a number');
+		if (options.maxRetries !== undefined && typeof options.maxRetries !== 'number') throw new TypeError('maxRetries must be a number');
+
         this.token = token;
         this.baseURL = options.baseURL ? options.baseURL : 'https://unbelievaboat.com/api';
         this.version = options.version !== undefined ? 'v' + options.version : '';
@@ -20,65 +27,104 @@ class Client {
     }
 
     /**
-     * Get a user's balance
-     * @param guildId - Guild ID
-     * @param userId - User ID
-     * @returns {Promise<User>} User object
-     */
+	 * Get a users balance.
+	 * 
+	 * @public
+	 * @param {string} guildId - The guild id to get from.
+	 * @param {string} userId - The user id to get.
+	 * @throws {TypeError}
+	 * @returns {Promise<User>} User object.
+	 * 
+	 * @see {@link https://unbelievaboat.com/api/docs#get-user-balance|Get User Balance}
+	 */
     getUserBalance(guildId, userId) {
-        if (!guildId) throw new Error('guildId must be specified');
-        if (!userId) throw new Error('userId must be specified');
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+		if (typeof userId !== 'string') throw new TypeError('userId must be a string');
+
         return this._request('GET', `guilds/${guildId}/users/${userId}`)
             .then(data => new User(data));
     }
 
     /**
-     * Set a user's balance to the given params
-     * @param {string} guildId - Guild ID
-     * @param {string} userId - User ID
-     * @param {number|string} [cash] Value to set the cash balance to
-     * @param {number|string} [bank] Value to set the bank balance to
-     * @param {string} [reason] Reason for the audit log
-     * @returns {Promise<User>} User object
-     */
-    setUserBalance(guildId, userId, { cash, bank } = {}, reason) {
-        if (!guildId) throw new Error('guildId must be specified');
-        if (!userId) throw new Error('userId must be specified');
-        if (!cash && !bank) throw new Error('cash or bank must be specified');
-        if (cash === Infinity) cash = 'Infinity';
-        if (bank === Infinity) bank = 'Infinity';
-        return this._request('PUT', `guilds/${guildId}/users/${userId}`, { cash, bank, reason })
+	 * Set a users balance to the provided values.
+	 * 
+	 * @public
+	 * @param {string} guildId - The guild id to use.
+	 * @param {string} userId - The user id to set the balance of.
+	 * @param {object} [data={}] - The balance options to set the users balance to.
+	 * @param {number | string} [data.cash] - The value to set the users cash balance to.
+	 * @param {number | string} [data.bank] - The value to set the users bank balance to.
+	 * @param {string} [reason] - The reason for changing the users balance to show in the audit log.
+	 * @throws {Error | TypeError}
+	 * @returns {Promise<User>} The updated user object.
+	 * 
+	 * @see {@link https://unbelievaboat.com/api/docs#put-user-balance|Put User Balance}
+	 */
+    setUserBalance(guildId, userId, data = {}, reason) {
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+		if (typeof userId !== 'string') throw new TypeError('userId must be a string');
+		if (typeof data !== 'object' || (data.cash === undefined && data.bank === undefined)) throw new Error('either cash or bank must be specified');
+		if (data.cash !== undefined && ((typeof data.cash !== 'number' && typeof data.cash !== 'string') || isNaN(data.cash))) throw new TypeError('cash must be a string or number');
+		if (data.bank !== undefined && ((typeof data.bank !== 'number' && typeof data.bank !== 'string') || isNaN(data.bank))) throw new TypeError('bank must be a string or number');
+		if (data.cash === Infinity) data.cash = 'Infinity';
+		if (data.bank === Infinity) data.bank = 'Infinity';
+
+        return this._request('PUT', `guilds/${guildId}/users/${userId}`, { cash: data.cash, bank: data.bank, reason })
             .then(data => new User(data));
     }
 
     /**
-     * Increase or decrease a user's balance by the cash and bank values given.
-     * Use negative values to decrease.
-     * @param {string} guildId - Guild ID
-     * @param {string} userId - User ID
-     * @param {number|string} [cash] Value to increase/decrease the cash balance by
-     * @param {number|string} [bank] Value to increase/decrease the bank balance by
-     * @param {string} [reason] Reason for the audit log
-     * @returns {Promise<User>}
-     */
-    editUserBalance(guildId, userId, { cash, bank } = {}, reason) {
-        if (!guildId) throw new Error('guildId must be specified');
-        if (!userId) throw new Error('userId must be specified');
-        if (!cash && !bank) throw new Error('cash or bank must be specified');
-        if (cash === Infinity) cash = 'Infinity';
-        if (bank === Infinity) bank = 'Infinity';
-        return this._request('PATCH', `guilds/${guildId}/users/${userId}`, { cash, bank, reason })
+	 * Increase or decrease a users balance by the cash and bank values given.
+	 * Use negative values to decrease.
+	 * 
+	 * @public
+	 * @param {string} guildId - The guild id to use.
+	 * @param {string} userId - The user id to modify the balance of.
+	 * @param {object} [data={}] - The balance options to increase/decrease the users balance by.
+	 * @param {number | string} [data.cash] - The amount to increase/decrease the users cash balance by.
+	 * @param {number | string} [data.bank] - The amount to increase/decrease the users bank balance by.
+	 * @param {string} [reason] - The reason for changing the users balance to show in the audit log.
+	 * @throws {Error | TypeError}
+	 * @returns {Promise<User>} The updated user object.
+	 * 
+	 * @see {@link https://unbelievaboat.com/api/docs#patch-user-balance|Patch User Balance}
+	 */
+    editUserBalance(guildId, userId, data = {}, reason) {
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+		if (typeof userId !== 'string') throw new TypeError('userId must be a string');
+		if (typeof data !== 'object' || (data.cash === undefined && data.bank === undefined)) throw new Error('either cash or bank must be specified');
+		if (data.cash !== undefined && ((typeof data.cash !== 'number' && typeof data.cash !== 'string') || isNaN(data.cash))) throw new TypeError('cash must be a string or number');
+		if (data.bank !== undefined && ((typeof data.bank !== 'number' && typeof data.bank !== 'string') || isNaN(data.bank))) throw new TypeError('bank must be a string or number');
+		if (data.cash === Infinity) data.cash = 'Infinity';
+		if (data.bank === Infinity) data.bank = 'Infinity';
+
+        return this._request('PATCH', `guilds/${guildId}/users/${userId}`, { cash: data.cash, bank: data.bank, reason })
             .then(data => new User(data));
     }
 
     /**
-     * Get a guild leaderboard
-     * @param {string} guildId - Guild ID
-     * @param {Object} [query] - Query string parameters (sort, limit, offset, page)
-     * @returns {Promise<Array<User>|{ users: Array<User>, totalPages: number }>}
-     */
-    getGuildLeaderboard(guildId, query) {
-        if (!guildId) throw new Error('guildId must be specified');
+	 * Get the leaderboard for a guild.
+	 * 
+	 * @public
+	 * @param {string} guildId - The guild id to get the leaderboard for.
+	 * @param {object} [query={}] - The query string parameters (sort, limit, offset, page).
+	 * @param {'total' | 'cash' | 'bank'} [query.sort] - The value to sort the leaderboard by.
+	 * @param {number} [query.limit] - The limit of items to return.
+	 * @param {number} [query.offset] - The index at which to start retrieving items from the leaderboard.
+	 * @param {number} [query.page] - The page to get items from. If provided the return value will be `{ users: Array, totalPages: Number }`.
+	 * @throws {TypeError}
+	 * @returns {Promise<User[] | { users: User[], totalPages: number }>} The leaderboard data.
+	 * 
+	 * @see {@link https://unbelievaboat.com/api/docs#get-guild-leaderboard|Get Guild Leaderboard}
+	 */
+    getGuildLeaderboard(guildId, query = {}) {
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+		if (typeof query !== 'object') throw new TypeError('query must be an object');
+		if (query.sort !== undefined && !['total', 'cash', 'bank'].includes(query.sort)) throw new TypeError('sort must be one of total, cash or bank');
+		if (query.limit !== undefined && typeof query.limit !== 'number') throw new TypeError('limit must be a number');
+		if (query.offset !== undefined && typeof query.offset !== 'number') throw new TypeError('offset must be a number');
+		if (query.page !== undefined && typeof query.page !== 'number') throw new TypeError('page must be a number');
+
         return this._request('GET', `guilds/${guildId}/users`, {}, query)
             .then(data => {
                 if (data.users) {
@@ -93,38 +139,52 @@ class Client {
     }
 
     /**
-     * Retrieve basic guild information for the given ID
-     * @param {string} guildId - Guild ID
-     * @returns {Promise<{Guild}>}
-     */
+    /**
+	 * Retrieve basic information for a guild.
+	 * 
+	 * @public
+	 * @param {string} guildId - The guild id to get basic information of.
+	 * @throws {TypeError}
+	 * @returns {Promise<Guild>}
+	 * 
+	 * @see {@link https://unbelievaboat.com/api/docs#get-guild|Get Guild}
+	 */
     getGuild(guildId) {
-        if (!guildId) throw new Error('guildId must be specified');
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+
         return this._request('GET', `guilds/${guildId}`)
             .then(data => new Guild(data));
     }
 
     /**
-     * Retrieve the permissions for the application
-     * This can only be used with an application API token
-     * @param {string} guildId - Guild ID
-     * @returns {Promise<{Permission}>}
-     */
+	 * Retrieve the permissions for the application.
+	 * This can only be used with an application API token.
+	 * 
+	 * @public
+	 * @param {string} guildId - The guild id to get the permissions for the application from.
+	 * @throws {TypeError}
+	 * @returns {Promise<Permission>} The permissions object for the application.
+	 * 
+	 * @see {@link https://unbelievaboat.com/api/docs#get-application-permissions|Get Application Permissions}
+	 */
     getApplicationPermission(guildId) {
-        if (!guildId) throw new Error('guildId must be specified');
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+
         return this._request('GET', `applications/@me/guilds/${guildId}`)
             .then(data => new Permission(data.permissions));
     }
 
     /**
-     * Send a request
-     * @param method - HTTP method (GET, PUT, PATCH etc.)
-     * @param endpoint - API endpoint
-     * @param [data] - JSON data
-     * @param [query] - Query string
-     * @returns {Promise<Object>}
-     * @private
-     */
-    _request(method, endpoint, data, query) {
+	 * Send a request.
+	 * 
+	 * @private
+	 * @param {Method} method - The http method to use (GET, PUT, PATCH etc.).
+	 * @param {string} endpoint - The api endpoint to request.
+	 * @param {object} [data={}] - The data to provide provide to the server.
+	 * @param {object} [query={}] - The query string options to use in the url.
+	 * @returns {Promise<any>} The raw request data.
+	 */
+    _request(method, endpoint, data = {}, query = {}) {
         return this.requestHandler.request(method, endpoint, data, query);
     }
 }
