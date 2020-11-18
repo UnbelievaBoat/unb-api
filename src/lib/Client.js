@@ -14,10 +14,10 @@ class Client {
 	 */
 	constructor(token, options = {}) {
 		if (typeof token !== 'string') throw new TypeError('The API token must be a string');
-	if (typeof options !== 'object') throw new TypeError('options must be an object');
-	if (options.baseURL !== undefined && typeof options.baseURL !== 'string') throw new TypeError('baseURL must be a string');
-	if (options.version !== undefined && typeof options.version !== 'number') throw new TypeError('version must be a number');
-	if (options.maxRetries !== undefined && typeof options.maxRetries !== 'number') throw new TypeError('maxRetries must be a number');
+		if (typeof options !== 'object') throw new TypeError('options must be an object');
+		if (options.baseURL !== undefined && typeof options.baseURL !== 'string') throw new TypeError('baseURL must be a string');
+		if (options.version !== undefined && typeof options.version !== 'number') throw new TypeError('version must be a number');
+		if (options.maxRetries !== undefined && typeof options.maxRetries !== 'number') throw new TypeError('maxRetries must be a number');
 
 		this.token = token;
 		this.baseURL = options.baseURL ? options.baseURL : 'https://unbelievaboat.com/api';
