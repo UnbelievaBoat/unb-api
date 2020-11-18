@@ -6,7 +6,7 @@ const MajorParams = ['guilds'];
 class RequestHandler {
     constructor(client) {
         this._client = client;
-        this.ratelimits = new Map();
+        this.ratelimits = {};
     }
 
     request(method, endpoint, data = {}, query = {}, _attempts = 0) {
