@@ -7,7 +7,7 @@ declare module 'unb-api' {
         public token: string;
         public baseURL: string;
         public version: string;
-        public maxRetries: Number;
+        public maxRetries: number;
 
         public getUserBalance(guild_id: string, user_id: string): Promise<User>;
 
@@ -15,7 +15,7 @@ declare module 'unb-api' {
 
         public editUserBalance(guild_id: string, user_id: string, balance: Balance): Promise<User>;
 
-        public getGuildLeaderboard(guild_id: string, query?: Object): Promise<User[]> | Promise<{ users: User[], totalPages: Number }>;
+        public getGuildLeaderboard(guild_id: string, query?: object): Promise<User[]> | Promise<{ users: User[], totalPages: number }>;
 
         public getGuild(guild_id: string): Promise<Guild>;
 
@@ -44,7 +44,7 @@ declare module 'unb-api' {
     export type Options = {
         baseURL?: string;
         version?: number;
-        maxRetries?: Number;
+        maxRetries?: number;
     }
 
     export class Guild {
