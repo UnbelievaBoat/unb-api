@@ -37,8 +37,8 @@ declare module 'unb-api' {
     }
 
     export type Balance = {
-        cash?: number,
-        bank?: number
+        cash?: number | string,
+        bank?: number | string
     }
 
     export type Options = {
