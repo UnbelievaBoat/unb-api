@@ -47,7 +47,7 @@ class Guild {
     }
 
     get iconURL() {
-        return this.icon ? `https://cdn.discordapp.com/icons/${this.id}/${this.icon}.png` : null;
+        return this.icon ? `https://cdn.discordapp.com/icons/${this.id}/${this.icon}.${this.icon.startsWith("a_") ? "gif" : "png"}` : null;
     }
 
 }
