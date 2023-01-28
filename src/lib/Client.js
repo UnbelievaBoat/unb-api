@@ -1,4 +1,5 @@
-const { Guild, Permission, User } = require('./structures');
+const { Guild, Permission, User, StoreItem, InventoryItem } = require('./structures');
+const { toSnakeCaseDeep } = require('./util');
 const RequestHandler = require('./RequestHandler');
 
 class Client {
@@ -170,7 +171,173 @@ class Client {
         if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
 
         return this._request('GET', `applications/@me/guilds/${guildId}`)
-            .then(data => new Permission(data.permissions));
+          .then(data => new Permission(data.permissions));
+    }
+
+    /**
+     * Get guild store items.
+     *
+     * @public
+     * @param {string} guildId - Guild ID
+     * @param {object} [options] - Options
+     * @param {string[]} [options.sort] - Array of properties to sort the items by (id, price, name, stock_remaining, expires_at)
+     * @param {number} [options.page] - The page to request
+     * @param {number} [options.limit=100] - Maximum number of items to return
+     * @param {string} [options.query] - Search for an item by name
+     * @throws {TypeError}
+     * @returns {Promise<{ items: StoreItem[], page: number, totalPages: number }>}
+     *
+     * @see {@link https://unbelievaboat-api.readme.io/reference/get-store-items|Get Store Items}
+     */
+    getItems(guildId, options) {
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+
+        return this._request('GET', `guilds/${guildId}/items`, {}, options)
+          .then(data => {
+              return {
+                  page:       data.page,
+                  totalPages: data.total_pages,
+                  items:      data.items.map(item => new StoreItem(item)),
+              };
+          });
+    }
+
+    /**
+     * Get a single store item.
+     *
+     * @public
+     * @param {string} guildId - Guild ID
+     * @param {string} itemId - Item ID
+     * @throws {TypeError}
+     * @returns {Promise<StoreItem>}
+     *
+     * @see {@link https://unbelievaboat-api.readme.io/reference/get-store-item|Get Store Item}
+     */
+    getItem(guildId, itemId) {
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+        if (typeof itemId !== 'string') throw new TypeError('itemId must be a string');
+
+        return this._request('GET', `guilds/${guildId}/items/${itemId}`)
+          .then(data => new StoreItem(data));
+    }
+
+    /**
+     * Edit an item
+     *
+     * @public
+     * @param {string} guildId - Guild ID
+     * @param {string} itemId - Item ID
+     * @param {StoreItem|object} data - Item properties to edit
+     * @param [options]
+     * @param [options.cascadeUpdate=false] - Inventory items will also be updated if set to true
+     * @returns {Promise<StoreItem>}
+     */
+    editItem(guildId, itemId, data, options) {
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+        if (typeof itemId !== 'string') throw new TypeError('itemId must be a string');
+
+        return this._request('PATCH', `guilds/${guildId}/items/${itemId}`, toSnakeCaseDeep(data), toSnakeCaseDeep(options))
+          .then(data => new StoreItem(data));
+    }
+
+    /**
+     * Delete an item
+     * @public
+     * @param {string} guildId - Guild ID
+     * @param {string} itemId - Item ID
+     * @param {object} [options]
+     * @param {boolean} [options.cascadeDelete=false] - Inventory items will also be deleted if set to true
+     * @returns {Promise<*>}
+     */
+    deleteItem(guildId, itemId, options) {
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+        if (typeof itemId !== 'string') throw new TypeError('itemId must be a string');
+
+        return this._request('DELETE', `guilds/${guildId}/items/${itemId}`, {}, toSnakeCaseDeep(options));
+    }
+
+    /**
+     * Get a users inventory items
+     *
+     * @public
+     * @param {string} guildId
+     * @param {string} userId
+     * @param {object} [options] - Options
+     * @param {string[]} [options.sort] - Array of properties to sort the items by (item_id, name, quantity)
+     * @param {number} [options.page] - The page to request
+     * @param {number} [options.limit=100] - Maximum number of items to return
+     * @param {string} [options.query] - Search for an item by name
+     * @returns {Promise<{totalPages: number, page: number, items: InventoryItem[]}>}
+     */
+    getInventoryItems(guildId, userId, options) {
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+        if (typeof userId !== 'string') throw new TypeError('itemId must be a string');
+
+        return this._request('GET', `guilds/${guildId}/users/${userId}/inventory`, {}, options)
+          .then(data => {
+              return {
+                  page:       data.page,
+                  totalPages: data.total_pages,
+                  items:      data.items.map(item => new InventoryItem(item)),
+              };
+          });
+    }
+
+    /**
+     * Get a single inventory item for a user
+     *
+     * @public
+     * @param {string} guildId - Guild ID
+     * @param {string} userId - User ID
+     * @param {string} itemId - Item ID
+     * @returns {Promise<{totalPages: number, page: number, items: InventoryItem[]}>}
+     */
+    getInventoryItem(guildId, userId, itemId) {
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+        if (typeof userId !== 'string') throw new TypeError('userId must be a string');
+        if (typeof itemId !== 'string') throw new TypeError('itemId must be a string');
+
+        return this._request('GET', `guilds/${guildId}/users/${userId}/inventory/${itemId}`)
+          .then(data => new InventoryItem(data));
+    }
+
+    /**
+     * Add an item to a users inventory
+     *
+     * @public
+     * @param {string} guildId - Guild ID
+     * @param {string} userId - User ID
+     * @param {string} itemId - Item ID
+     * @param {number|string} [quantity=1] - Quantity to add
+     * @param {object} [options]
+     * @param {string} [options.inventoryUserId] - User ID of the inventory to add the item from (can be used if the item no longer exists in the store or the item settings differ)
+     * @returns {Promise<InventoryItem>}
+     */
+    addInventoryItem(guildId, userId, itemId, quantity, options) {
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+        if (typeof userId !== 'string') throw new TypeError('userId must be a string');
+        if (typeof itemId !== 'string') throw new TypeError('itemId must be a string');
+
+        return this._request('POST', `guilds/${guildId}/users/${userId}/inventory`, toSnakeCaseDeep({ itemId, quantity, options }))
+          .then(data => new InventoryItem(data));
+    }
+
+    /**
+     * Add an item to a users inventory
+     *
+     * @public
+     * @param {string} guildId - Guild ID
+     * @param {string} userId - User ID
+     * @param {string} itemId - Item ID
+     * @param {number|string} [quantity=1] - Quantity to remove
+     * @returns {Promise<*>}
+     */
+    removeInventoryItem(guildId, userId, itemId, quantity) {
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+        if (typeof userId !== 'string') throw new TypeError('userId must be a string');
+        if (typeof itemId !== 'string') throw new TypeError('itemId must be a string');
+
+        return this._request('DELETE', `guilds/${guildId}/users/${userId}/inventory/${itemId}`, {}, { quantity });
     }
 
     /**
@@ -179,7 +346,7 @@ class Client {
      * @private
      * @param {string} method - The http method to use (GET, PUT, PATCH etc.).
      * @param {string} endpoint - The api endpoint to request.
-     * @param {object} [data={}] - The data to provide provide to the server.
+     * @param {object} [data={}] - The data to provide to the server.
      * @param {object} [query={}] - The query string options to use in the url.
      * @returns {Promise<any>} The raw request data.
      */

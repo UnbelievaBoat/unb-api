@@ -1,5 +1,5 @@
 const axios = require('axios');
-const Bucket = require('./structures/Bucket');
+const Bucket = require('./util/Bucket');
 const { APIError, HTTPError } = require('./errors');
 const MajorParams = ['guilds'];
 
