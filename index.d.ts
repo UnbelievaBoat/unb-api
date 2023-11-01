@@ -11,9 +11,9 @@ declare module 'unb-api' {
 
         public getUserBalance(guildId: string, userId: string): Promise<User>;
 
-        public setUserBalance(guildId: string, userId: string, balance: Balance): Promise<User>;
+        public setUserBalance(guildId: string, userId: string, balance: Balance, reason?: string): Promise<User>;
 
-        public editUserBalance(guildId: string, userId: string, balance: Balance): Promise<User>;
+        public editUserBalance(guildId: string, userId: string, balance: Balance, reason?: string): Promise<User>;
 
         public getGuildLeaderboard(guildId: string, query?: object): Promise<User[]> | Promise<{ users: User[], totalPages: number }>;
 
