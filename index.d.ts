@@ -25,6 +25,8 @@ declare module 'unb-api' {
         public getItems(guildId: string, options?: ItemListOptions): Promise<{ page: number, totalPages: number, items: StoreItem[] }>
 
         public getItem(guildId: string, itemId: string): Promise<StoreItem>
+        
+        public createItem(guildId: string): Promise<StoreItem>
 
         public editItem(guildId: string, itemId: string, data: StoreItem | object, options?: { cascadeUpdate?: boolean }): Promise<StoreItem>
 

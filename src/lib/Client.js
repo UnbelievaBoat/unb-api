@@ -222,6 +222,23 @@ class Client {
     }
 
     /**
+     * Create an item
+     *
+     * @public
+     * @param {string} guildId - Guild ID
+     * @param {StoreItem|object} data - Item properties to create the item with
+     * @returns {Promise<StoreItem>}
+     *
+     * @see {@link https://unbelievaboat-api.readme.io/reference/create-store-item|Create Store Item}
+     */
+    createItem(guildId, data) {
+        if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
+
+        return this._request('POST', `guilds/${guildId}/items`, toSnakeCaseDeep(data))
+          .then(data => new StoreItem(data));
+    }
+
+    /**
      * Edit an item
      *
      * @public
