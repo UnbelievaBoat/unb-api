@@ -15,14 +15,14 @@ declare module 'unb-api' {
 
         public editUserBalance(guildId: string, userId: string, balance: Balance, reason?: string): Promise<User>;
 
-        public getGuildLeaderboard(guildId: string, query?: object): Promise<User[]> | Promise<{ users: User[], totalPages: number }>;
+        public getGuildLeaderboard(guildId: string, query?: ListOptions): Promise<User[]> | Promise<{ users: User[], totalPages: number }>;
 
         public getGuild(guildId: string): Promise<Guild>;
 
         public getApplicationPermission(guildId: string): Promise<Permission>;
 
 
-        public getItems(guildId: string, options?: ItemListOptions): Promise<{ page: number, totalPages: number, items: StoreItem[] }>
+        public getItems(guildId: string, options?: ListOptions): Promise<{ page: number, totalPages: number, items: StoreItem[] }>
 
         public getItem(guildId: string, itemId: string): Promise<StoreItem>
         
@@ -33,7 +33,7 @@ declare module 'unb-api' {
         public deleteItem(guildId: string, itemId: string): Promise<any>
 
 
-        public getInventoryItems(guildId: string, userId: string, options?: ItemListOptions): Promise<{ page: number, totalPages: number, items: InventoryItem[] }>
+        public getInventoryItems(guildId: string, userId: string, options?: ListOptions): Promise<{ page: number, totalPages: number, items: InventoryItem[] }>
 
         public getInventoryItem(guildId: string, userId: string, itemId: string): Promise<InventoryItem>
 
@@ -159,10 +159,10 @@ declare module 'unb-api' {
         balance: number;
     }
 
-    export type ItemListOptions = {
-        limit: number;
-        page: number;
-        sort: string[]
-        query: string;
+    export type ListOptions = {
+        limit?: number;
+        page?: number;
+        sort?: string[] | string
+        query?: string;
     }
 }
