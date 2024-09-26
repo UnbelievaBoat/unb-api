@@ -1,15 +1,10 @@
-class APIError extends Error {
-    constructor(response) {
-        super();
-        this.name = this.constructor.name;
-        this.message = response.data.error || response.data.message || 'Unknown error';
-        this.status = response.status;
-        this.errors = response.data.errors || null;
+const HTTPError = require('./HTTPError');
 
-        Object.defineProperty(this, 'response', {
-            enumerable: true,
-            value: response
-        });
+class APIError extends HTTPError {
+    constructor(request, response) {
+        super(request, response);
+        this.message = response.data.message || response.data.error || response.statusText || 'Unknown error';
+        this.errors = response.data.errors || null;
     }
 }
 
