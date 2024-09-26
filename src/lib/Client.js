@@ -248,6 +248,8 @@ class Client {
      * @param [options]
      * @param [options.cascadeUpdate=false] - Inventory items will also be updated if set to true
      * @returns {Promise<StoreItem>}
+     * 
+     * @see {@link https://unbelievaboat-api.readme.io/reference/edit-store-item|Edit Store Item}
      */
     editItem(guildId, itemId, data, options) {
         if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
@@ -265,6 +267,8 @@ class Client {
      * @param {object} [options]
      * @param {boolean} [options.cascadeDelete=false] - Inventory items will also be deleted if set to true
      * @returns {Promise<*>}
+     * 
+     * @see {@link https://unbelievaboat-api.readme.io/reference/delete-store-item|Delete Store Item}
      */
     deleteItem(guildId, itemId, options) {
         if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
@@ -285,6 +289,8 @@ class Client {
      * @param {number} [options.limit=100] - Maximum number of items to return
      * @param {string} [options.query] - Search for an item by name
      * @returns {Promise<{totalPages: number, page: number, items: InventoryItem[]}>}
+     * 
+     * @see {@link https://unbelievaboat-api.readme.io/reference/get-user-inventory-items|Get Inventory Items}
      */
     getInventoryItems(guildId, userId, options) {
         if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
@@ -307,7 +313,9 @@ class Client {
      * @param {string} guildId - Guild ID
      * @param {string} userId - User ID
      * @param {string} itemId - Item ID
-     * @returns {Promise<{totalPages: number, page: number, items: InventoryItem[]}>}
+     * @returns {Promise<InventoryItem>}
+     * 
+     * @see {@link https://unbelievaboat-api.readme.io/reference/get-inventory-item|Get Inventory Item}
      */
     getInventoryItem(guildId, userId, itemId) {
         if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
@@ -329,6 +337,8 @@ class Client {
      * @param {object} [options]
      * @param {string} [options.inventoryUserId] - User ID of the inventory to add the item from (can be used if the item no longer exists in the store or the item settings differ)
      * @returns {Promise<InventoryItem>}
+     * 
+     * @see {@link https://unbelievaboat-api.readme.io/reference/add-inventory-item|Add Inventory Item}
      */
     addInventoryItem(guildId, userId, itemId, quantity, options) {
         if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
@@ -348,6 +358,8 @@ class Client {
      * @param {string} itemId - Item ID
      * @param {number|string} [quantity=1] - Quantity to remove
      * @returns {Promise<*>}
+     * 
+     * @see {@link https://unbelievaboat-api.readme.io/reference/remove-inventory-item|Remove Inventory Item}
      */
     removeInventoryItem(guildId, userId, itemId, quantity) {
         if (typeof guildId !== 'string') throw new TypeError('guildId must be a string');
