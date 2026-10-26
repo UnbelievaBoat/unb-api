@@ -37,7 +37,7 @@ declare module 'unb-api' {
 
         public getInventoryItem(guildId: string, userId: string, itemId: string): Promise<InventoryItem>
 
-        public addInventoryItem(guildId: string, userId: string, itemId: string, quantity?: string | number, options?: { inventoryUserId?: string }): Promise<InventoryItem>
+        public addInventoryItem(guildId: string, userId: string, itemId: string, quantity?: string | number, options?: { inventoryUserId?: string, ignoreMaxQuantity?: boolean }): Promise<InventoryItem>
 
         public removeInventoryItem(guildId: string, userId: string, itemId: string, quantity?: string | number): Promise<any>
 
@@ -111,6 +111,7 @@ declare module 'unb-api' {
         public price: number;
         public stockRemaining: number;
         public unlimitedStock: boolean;
+        public maxQuantity: number | null;
         public isInventory: boolean;
         public expiresAt?: Date;
     }

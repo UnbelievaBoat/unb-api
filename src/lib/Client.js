@@ -336,6 +336,7 @@ class Client {
      * @param {number|string} [quantity=1] - Quantity to add
      * @param {object} [options]
      * @param {string} [options.inventoryUserId] - User ID of the inventory to add the item from (can be used if the item no longer exists in the store or the item settings differ)
+     * @param {boolean} [options.ignoreMaxQuantity=false] - Add the item even if the user would own more than the item's max quantity
      * @returns {Promise<InventoryItem>}
      * 
      * @see {@link https://unbelievaboat-api.readme.io/reference/add-inventory-item|Add Inventory Item}

@@ -89,7 +89,7 @@ Returns: `Promise<{ page: number, totalPages: number, items: InventoryItem[] }>`
 `getInventoryItem(guildId: string, userId: string, itemId: string)`  
 Returns: `Promise<InventoryItem>`
 
-`addInventoryItem(guildId: string, userId: string, itemId: string, quantity?: string | number, options?: { inventoryUserId?: string })`  
+`addInventoryItem(guildId: string, userId: string, itemId: string, quantity?: string | number, options?: { inventoryUserId?: string, ignoreMaxQuantity?: boolean })`  
 Returns: `Promise<InventoryItem>`
 
 `removeInventoryItem(guildId: string, userId: string, itemId: string, quantity?: string | number)`  
@@ -138,6 +138,7 @@ Returns: `Promise<any>`
 | Number  | `price`          | Price of the item.                                                        |
 | Number  | `stockRemaining` | Amount of stock remaining for the item.                                   |
 | Boolean | `unlimitedStock` | Whether the item has unlimited stock.                                     |
+| Number  | `maxQuantity?`   | Max a user can own, or buy at once if not an inventory item.              |
 | Boolean | `isInventory`    | Indicates if the item will be added to a user’s inventory when purchased. |
 | Date    | `expiresAt?`     | Expiration date of the item.                                              |
 | Boolean | `isUsable`       | Whether the item can be used by the user.                                 |
