@@ -1,4 +1,3 @@
-const axios = require('axios');
 const Bucket = require('./util/Bucket');
 const { APIError, HTTPError } = require('./errors');
 const MajorParams = ['guilds'];
@@ -7,13 +6,6 @@ class RequestHandler {
     constructor(client) {
         this._client = client;
         this.ratelimits = {};
-        this.axiosInstance = axios.create({
-            baseURL: this._client.baseURL,
-            headers: {
-                'Authorization': this._client.token,
-                'Content-Type': 'application/json'
-            }
-        });
     }
 
     async request(method, endpoint, data = {}, params = {}, _attempts = 0) {
@@ -32,7 +24,7 @@ class RequestHandler {
                 };
 
                 try {
-                    const { data: responseData, status, headers } = await this.axiosInstance(options);
+                    const { data: responseData, status, statusText, headers } = await this.fetch(options);
 
                     // Increase the number of attempts
                     ++_attempts;
@@ -44,21 +36,17 @@ class RequestHandler {
                         resolve(responseData);
                     } else if (status === 429) {
                         if (_attempts >= this._client.maxRetries) {
-                            this.rejectWithError(options, responseData, status, reject);
+                            this.rejectWithError(options, responseData, status, statusText, reject);
                         } else {
                             this.retryRequest(method, endpoint, data, params, _attempts, headers, resolve, reject);
                         }
                     } else {
-                        this.rejectWithError(options, responseData, status, reject);
+                        this.rejectWithError(options, responseData, status, statusText, reject);
                     }
 
                     callback();
                 } catch (error) {
-                    if (axios.isAxiosError(error)) {
-                        this.rejectWithError(options, error.response.data, error.response.status, reject);
-                    } else {
-                        reject(error);
-                    }
+                    reject(error);
                     callback();
                 }
             };
@@ -67,11 +55,49 @@ class RequestHandler {
         });
     }
 
-    rejectWithError(options, data, status, reject) {
+    async fetch(options) {
+        const url = new URL(`${this._client.baseURL.replace(/\/+$/, '')}${options.url}`);
+        for (const [key, value] of Object.entries(options.params || {})) {
+            if (value === undefined || value === null) continue;
+            if (Array.isArray(value)) {
+                for (const v of value) url.searchParams.append(`${key}[]`, v);
+            } else {
+                url.searchParams.append(key, value);
+            }
+        }
+
+        const response = await fetch(url, {
+            method: options.method,
+            headers: {
+                'Authorization': this._client.token,
+                'Content-Type': 'application/json'
+            },
+            body: ['GET', 'HEAD'].includes(options.method) ? undefined : JSON.stringify(options.data)
+        });
+
+        const text = await response.text();
+        let data = text;
+        if (text) {
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                // Not JSON (e.g. an HTML error page from a proxy), keep the raw text
+            }
+        }
+
+        return {
+            data,
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers)
+        };
+    }
+
+    rejectWithError(options, data, status, statusText, reject) {
         if (data && data.message) {
-            reject(new APIError(options, { data, status }));
+            reject(new APIError(options, { data, status, statusText }));
         } else {
-            reject(new HTTPError(options, { data, status }));
+            reject(new HTTPError(options, { data, status, statusText }));
         }
     }
 
