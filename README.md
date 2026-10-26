@@ -10,6 +10,8 @@
 
 `npm install unb-api`
 
+Requires Node.js 18 or newer (uses the built-in `fetch`). For older Node.js versions, use `unb-api@1`.
+
 ## Documentation
 
 Full API documentation is located at [https://unbelievaboat.com/api/docs](https://unbelievaboat.com/api/docs)

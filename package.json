@@ -16,12 +16,12 @@
   ],
   "author": "unbelievable",
   "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
   "devDependencies": {
     "@types/node": "^10.0.7",
     "eslint": "^6.7.2",
     "typescript": "^2.6.2"
-  },
-  "dependencies": {
-    "axios": "^1.20.0"
   }
 }
