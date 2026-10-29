@@ -98,6 +98,8 @@ declare module 'unb-api' {
         public description?: string;
         public isUsable: boolean;
         public isSellable: boolean;
+        public isReusable: boolean;
+        public useCooldownSeconds: number | null;
         public requirements: StoreItemRequirement[];
         public actions: StoreItemAction[];
         public emojiUnicode?: string;

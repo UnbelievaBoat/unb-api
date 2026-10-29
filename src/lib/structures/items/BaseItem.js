@@ -7,6 +7,8 @@ class BaseItem {
     this.description = data.description;
     this.isUsable = data.is_usable;
     this.isSellable = data.is_sellable;
+    this.isReusable = data.is_reusable ?? false;
+    this.useCooldownSeconds = data.use_cooldown_seconds ?? null;
     this.requirements = data.requirements.map(requirement => new StoreItemRequirement(requirement));
     this.actions = data.actions.map(action => new StoreItemAction(action));
     this.emojiUnicode = data.emoji_unicode;

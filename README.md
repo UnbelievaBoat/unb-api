@@ -132,38 +132,42 @@ Returns: `Promise<any>`
 
 #### StoreItem
 
-| Type    | Property         | Description                                                               |
-|---------|------------------|---------------------------------------------------------------------------|
-| String  | `id`             | Unique ID of the item in the store.                                       |
-| String  | `name`           | Name of the item.                                                         |
-| String  | `description?`   | Description of the item.                                                  |
-| Number  | `price`          | Price of the item.                                                        |
-| Number  | `stockRemaining` | Amount of stock remaining for the item.                                   |
-| Boolean | `unlimitedStock` | Whether the item has unlimited stock.                                     |
-| Number  | `maxQuantity?`   | Max a user can own, or buy at once if not an inventory item.              |
-| Boolean | `isInventory`    | Indicates if the item will be added to a user’s inventory when purchased. |
-| Date    | `expiresAt?`     | Expiration date of the item.                                              |
-| Boolean | `isUsable`       | Whether the item can be used by the user.                                 |
-| Boolean | `isSellable`     | Whether the item can be sold by the user.                                 |
-| Array   | `requirements`   | Requirements needed to purchase the item.                                 |
-| Array   | `actions`        | Actions performed when the item is used.                                  |
-| String  | `emojiUnicode?`  | Unicode emoji associated with the item.                                   |
-| String  | `emojiId?`       | Custom emoji ID associated with the item.                                 |
+| Type    | Property              | Description                                                               |
+|---------|-----------------------|---------------------------------------------------------------------------|
+| String  | `id`                  | Unique ID of the item in the store.                                       |
+| String  | `name`                | Name of the item.                                                         |
+| String  | `description?`        | Description of the item.                                                  |
+| Number  | `price`               | Price of the item.                                                        |
+| Number  | `stockRemaining`      | Amount of stock remaining for the item.                                   |
+| Boolean | `unlimitedStock`      | Whether the item has unlimited stock.                                     |
+| Number  | `maxQuantity?`        | Max a user can own, or buy at once if not an inventory item.              |
+| Boolean | `isInventory`         | Indicates if the item will be added to a user’s inventory when purchased. |
+| Date    | `expiresAt?`          | Expiration date of the item.                                              |
+| Boolean | `isUsable`            | Whether the item can be used by the user.                                 |
+| Boolean | `isSellable`          | Whether the item can be sold by the user.                                 |
+| Boolean | `isReusable`          | Whether the item stays in the inventory when used.                        |
+| Number  | `useCooldownSeconds?` | Seconds a user must wait between uses of the item.                        |
+| Array   | `requirements`        | Requirements needed to purchase the item.                                 |
+| Array   | `actions`             | Actions performed when the item is used.                                  |
+| String  | `emojiUnicode?`       | Unicode emoji associated with the item.                                   |
+| String  | `emojiId?`            | Custom emoji ID associated with the item.                                 |
 
 #### InventoryItem
 
-| Type                                            | Property        | Description                                   |
-|-------------------------------------------------|-----------------|-----------------------------------------------|
-| String                                          | `itemId`        | Unique ID of the item in the inventory.       |
-| Number                                          | `quantity`      | Quantity of the item in the user's inventory. |
-| String                                          | `name`          | Name of the item.                             |
-| String                                          | `description?`  | Description of the item.                      |
-| Boolean                                         | `isUsable`      | Whether the item can be used by the user.     |
-| Boolean                                         | `isSellable`    | Whether the item can be sold by the user.     |
-| [StoreItemRequirement[]](#StoreItemRequirement) | `requirements`  | Requirements needed to use the item.          |
-| [StoreItemAction[]](#StoreItemAction)           | `actions`       | Actions performed when the item is used.      |
-| String                                          | `emojiUnicode?` | Unicode emoji associated with the item.       |
-| String                                          | `emojiId?`      | Custom emoji ID associated with the item.     |
+| Type                                            | Property              | Description                                        |
+|-------------------------------------------------|-----------------------|----------------------------------------------------|
+| String                                          | `itemId`              | Unique ID of the item in the inventory.            |
+| Number                                          | `quantity`            | Quantity of the item in the user's inventory.      |
+| String                                          | `name`                | Name of the item.                                  |
+| String                                          | `description?`        | Description of the item.                           |
+| Boolean                                         | `isUsable`            | Whether the item can be used by the user.          |
+| Boolean                                         | `isSellable`          | Whether the item can be sold by the user.          |
+| Boolean                                         | `isReusable`          | Whether the item stays in the inventory when used. |
+| Number                                          | `useCooldownSeconds?` | Seconds a user must wait between uses of the item. |
+| [StoreItemRequirement[]](#StoreItemRequirement) | `requirements`        | Requirements needed to use the item.               |
+| [StoreItemAction[]](#StoreItemAction)           | `actions`             | Actions performed when the item is used.           |
+| String                                          | `emojiUnicode?`       | Unicode emoji associated with the item.            |
+| String                                          | `emojiId?`            | Custom emoji ID associated with the item.          |
 
 #### StoreItemRequirement
 
