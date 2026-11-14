@@ -149,6 +149,7 @@ Returns: `Promise<any>`
 | Number  | `useCooldownSeconds?` | Seconds a user must wait between uses of the item.                        |
 | Array   | `requirements`        | Requirements needed to purchase the item.                                 |
 | Array   | `actions`             | Actions performed when the item is used.                                  |
+| Array   | `outcomePools`        | [Random outcomes](#OutcomePool) rolled when the item is bought or used.   |
 | String  | `emojiUnicode?`       | Unicode emoji associated with the item.                                   |
 | String  | `emojiId?`            | Custom emoji ID associated with the item.                                 |
 
@@ -166,6 +167,7 @@ Returns: `Promise<any>`
 | Number                                          | `useCooldownSeconds?` | Seconds a user must wait between uses of the item. |
 | [StoreItemRequirement[]](#StoreItemRequirement) | `requirements`        | Requirements needed to use the item.               |
 | [StoreItemAction[]](#StoreItemAction)           | `actions`             | Actions performed when the item is used.           |
+| [OutcomePool[]](#OutcomePool)                   | `outcomePools`        | Random outcomes rolled when the item is used.      |
 | String                                          | `emojiUnicode?`       | Unicode emoji associated with the item.            |
 | String                                          | `emojiId?`            | Custom emoji ID associated with the item.          |
 
@@ -186,6 +188,16 @@ Returns: `Promise<any>`
 | String[]            | `ids`      | An array of IDs corresponding to roles, items, or other entities involved in the action.                                                 |
 | Object              | `message?` | Discord message object, only applicable if `type` is `RESPOND`.                                                                          |
 | Number              | `balance?` | Balance amount to be added or removed (applicable if `type` is `ADD_BALANCE` or `REMOVE_BALANCE`).                                       |
+
+#### OutcomePool
+
+Each roll picks one outcome by its chance, or nothing for the rest of the pool's 100%. Separate pools roll independently.
+
+| Type   | Property       | Description                                                                                                                       |
+|--------|----------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| Number | `triggerFlags` | When the pool is rolled, bitwise: `1` when bought, `2` when used.                                                                 |
+| Number | `rolls`        | Rolls per item bought or used.                                                                                                    |
+| Array  | `outcomes`     | The possible outcomes: `chance` in hundredths of a percent (`2500` is 25%) and `actions` ([StoreItemAction[]](#StoreItemAction)). |
 
 #### Permission
 

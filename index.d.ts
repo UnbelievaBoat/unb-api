@@ -102,6 +102,7 @@ declare module 'unb-api' {
         public useCooldownSeconds: number | null;
         public requirements: StoreItemRequirement[];
         public actions: StoreItemAction[];
+        public outcomePools: OutcomePool[];
         public emojiUnicode?: string;
         public emojiId?: string;
     }
@@ -160,6 +161,15 @@ declare module 'unb-api' {
         ids: string[];
         message: object;    //  discord message object
         balance: number;
+    }
+
+    export type OutcomePool = {
+        triggerFlags: number;   //  1: buy, 2: use (bitwise)
+        rolls: number;
+        outcomes: {
+            chance: number;     //  hundredths of a percent (2500 = 25%)
+            actions: StoreItemAction[];
+        }[];
     }
 
     export type ListOptions = {
