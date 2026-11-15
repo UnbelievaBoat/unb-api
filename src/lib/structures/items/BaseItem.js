@@ -7,6 +7,7 @@ class BaseItem {
     this.description = data.description;
     this.isUsable = data.is_usable;
     this.isSellable = data.is_sellable;
+    this.sellPrice = data.sell_price == null ? null : Number(data.sell_price);
     this.isReusable = data.is_reusable ?? false;
     this.useCooldownSeconds = data.use_cooldown_seconds ?? null;
     this.requirements = data.requirements.map(requirement => new StoreItemRequirement(requirement));

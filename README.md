@@ -145,6 +145,7 @@ Returns: `Promise<any>`
 | Date    | `expiresAt?`          | Expiration date of the item.                                              |
 | Boolean | `isUsable`            | Whether the item can be used by the user.                                 |
 | Boolean | `isSellable`          | Whether the item can be sold by the user.                                 |
+| Number  | `sellPrice?`          | Paid each when the item is sold back to the store with `/item sell-back`. |
 | Boolean | `isReusable`          | Whether the item stays in the inventory when used.                        |
 | Number  | `useCooldownSeconds?` | Seconds a user must wait between uses of the item.                        |
 | Array   | `requirements`        | Requirements needed to purchase the item.                                 |
@@ -163,6 +164,7 @@ Returns: `Promise<any>`
 | String                                          | `description?`        | Description of the item.                           |
 | Boolean                                         | `isUsable`            | Whether the item can be used by the user.          |
 | Boolean                                         | `isSellable`          | Whether the item can be sold by the user.          |
+| Number                                          | `sellPrice?`          | Paid each when sold back to the store.             |
 | Boolean                                         | `isReusable`          | Whether the item stays in the inventory when used. |
 | Number                                          | `useCooldownSeconds?` | Seconds a user must wait between uses of the item. |
 | [StoreItemRequirement[]](#StoreItemRequirement) | `requirements`        | Requirements needed to use the item.               |

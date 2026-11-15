@@ -98,6 +98,8 @@ declare module 'unb-api' {
         public description?: string;
         public isUsable: boolean;
         public isSellable: boolean;
+        /** Paid each when sold back to the store with /item sell-back, null when it can't be */
+        public sellPrice: number | null;
         public isReusable: boolean;
         public useCooldownSeconds: number | null;
         public requirements: StoreItemRequirement[];
